@@ -18,3 +18,8 @@ __pycache__/
 
 # dependências que o próprio OpenCode instala
 .opencode/node_modules/
+
+# Banco SQLite local
+api/data/*.sqlite
+api/data/*.sqlite-shm
+api/data/*.sqlite-wal
