@@ -46,4 +46,20 @@ describe('Modo de Teste - Com MODO_TESTE=1', () => {
     const consulta = await request(app).get('/_teste/relogio');
     assert.deepEqual(consulta.body, { agora });
   });
+
+  it('POST /_teste/reset restaura o relogio inicial do contrato', async () => {
+    process.env.MODO_TESTE = '1';
+
+    await request(app)
+      .put('/_teste/relogio')
+      .send({ agora: '2026-10-19T10:00:00-03:00' });
+
+    const reset = await request(app).post('/_teste/reset');
+
+    assert.equal(reset.status, 204);
+    assert.equal(reset.text, '');
+
+    const consulta = await request(app).get('/_teste/relogio');
+    assert.deepEqual(consulta.body, { agora: '2026-10-13T09:00:00-03:00' });
+  });
 });

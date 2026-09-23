@@ -1,23 +1,40 @@
 import express from 'express';
-import { definirAgora, obterAgora } from './relogio.js';
+import { reinicializarBanco } from './banco.js';
+import { definirAgora, obterAgora, resetarRelogio } from './relogio.js';
 
-const app = express();
-app.use(express.json());
+function criarApp({ banco } = {}) {
+  const app = express();
+  app.use(express.json());
 
-app.get('/_teste/relogio', (req, res) => {
-  if (process.env.MODO_TESTE !== '1') {
-    return res.sendStatus(404);
-  }
+  app.get('/_teste/relogio', (req, res) => {
+    if (process.env.MODO_TESTE !== '1') {
+      return res.sendStatus(404);
+    }
 
-  return res.json({ agora: obterAgora() });
-});
+    return res.json({ agora: obterAgora() });
+  });
 
-app.put('/_teste/relogio', (req, res) => {
-  if (process.env.MODO_TESTE !== '1') {
-    return res.sendStatus(404);
-  }
+  app.put('/_teste/relogio', (req, res) => {
+    if (process.env.MODO_TESTE !== '1') {
+      return res.sendStatus(404);
+    }
 
-  return res.json({ agora: definirAgora(req.body.agora) });
-});
+    return res.json({ agora: definirAgora(req.body.agora) });
+  });
 
-export { app };
+  app.post('/_teste/reset', (req, res) => {
+    if (process.env.MODO_TESTE !== '1') {
+      return res.sendStatus(404);
+    }
+
+    if (banco) reinicializarBanco(banco);
+    resetarRelogio();
+    return res.sendStatus(204);
+  });
+
+  return app;
+}
+
+const app = criarApp();
+
+export { app, criarApp };
