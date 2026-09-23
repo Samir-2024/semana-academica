@@ -3,65 +3,151 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>M3 — Presença por QR</title>
+  <title>Semana Acadêmica</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header class="topo">
-    <h1>Presença por QR</h1>
-    <nav class="abas">
-      <button id="tab-organizacao" class="aba ativo" type="button">Organização</button>
-      <button id="tab-participante" class="aba" type="button">Participante</button>
+    <h1>Semana Acadêmica</h1>
+    <nav class="abas-modulo">
+      <button id="tab-m1" class="aba-modulo ativo" type="button" data-modulo="m1">M1 — Grade de Atividades</button>
+      <button id="tab-m3" class="aba-modulo" type="button" data-modulo="m3">M3 — Presença por QR</button>
     </nav>
   </header>
 
   <main>
-    <section id="tela-organizacao" class="tela">
-      <h2>Código do encontro</h2>
-      <form id="org-form" class="formulario">
-        <label>
-          ID do encontro
-          <input id="org-encontro-id" name="encontroId" placeholder="enc_…" autocomplete="off" spellcheck="false">
-        </label>
-        <button id="org-carregar" type="submit" class="principal">Obter código</button>
-      </form>
-
-      <p id="org-msg" class="msg" role="status"></p>
-
-      <div id="org-codigo-box" class="codigo-box" hidden>
-        <div id="org-codigo" class="codigo-grande" aria-label="Código de presença"></div>
-        <div class="codigo-meta">
-          <span>Encontro <b id="org-encontro-info"></b></span>
-          <span>Válido até <time id="org-valido"></time></span>
-          <span>Próxima troca <time id="org-troca"></time></span>
+    <!-- M1 — Grade de Atividades -->
+    <section id="modulo-m1" class="modulo ativo">
+      <header class="cabecalho-modulo">
+        <h2>Grade de Atividades</h2>
+        <div class="filtros">
+          <div class="filtro-grupo">
+            <label for="m1-filtro-dia">Dia</label>
+            <input type="date" id="m1-filtro-dia" name="dia">
+          </div>
+          <div class="filtro-grupo">
+            <label for="m1-filtro-tipo">Tipo</label>
+            <select id="m1-filtro-tipo" name="tipo">
+              <option value="">Todos</option>
+              <option value="palestra">Palestra</option>
+              <option value="minicurso">Minicurso</option>
+            </select>
+          </div>
         </div>
-        <button id="org-cheia" type="button" class="segundario">Tela cheia</button>
-      </div>
+      </header>
+
+      <section id="m1-lista" class="secao-lista">
+        <h3>Atividades</h3>
+        <div id="m1-lista-atividades" class="lista-atividades"></div>
+        <p id="m1-vazio" class="vazio" hidden>Nenhuma atividade encontrada.</p>
+      </section>
+
+      <section id="m1-detalhe" class="secao-detalhe" hidden>
+        <header class="cabecalho-detalhe">
+          <h3 id="m1-detalhe-titulo"></h3>
+          <button id="m1-voltar" class="voltar" type="button">← Voltar</button>
+        </header>
+        <div id="m1-detalhe-conteudo" class="detalhe-conteudo"></div>
+      </section>
+
+      <section id="m1-formulario" class="secao-formulario" hidden>
+        <header class="cabecalho-formulario">
+          <h3 id="m1-form-titulo">Nova Atividade</h3>
+          <button id="m1-form-cancelar" class="cancelar" type="button">Cancelar</button>
+        </header>
+        <form id="m1-form" class="formulario-atividade">
+          <input type="hidden" id="m1-form-id" name="id">
+          <div class="campo">
+            <label>Título <input type="text" name="titulo" required placeholder="Título da atividade"></label>
+          </div>
+          <div class="campo">
+            <label>Tipo
+              <select name="tipo" required>
+                <option value="palestra">Palestra</option>
+                <option value="minicurso">Minicurso</option>
+              </select>
+            </label>
+          </div>
+          <div class="campo">
+            <label>Sala <select name="salaId" required></select></label>
+          </div>
+          <div class="campo">
+            <label>Vagas <input type="number" name="vagas" min="1" required></label>
+          </div>
+          <fieldset class="encontros-fieldset">
+            <legend>Encontros</legend>
+            <div id="m1-encontros-lista"></div>
+            <button type="button" id="m1-add-encontro" class="secundario">+ Adicionar encontro</button>
+          </fieldset>
+          <div id="m1-form-msg" class="msg" role="status" hidden></div>
+          <div class="acoes-form">
+            <button type="submit" class="principal">Salvar</button>
+            <button type="button" id="m1-form-excluir" class="perigo" hidden>Excluir</button>
+          </div>
+        </form>
+      </section>
     </section>
 
-    <section id="tela-participante" class="tela" hidden>
-      <h2>Registrar presença</h2>
-      <form id="par-form" class="formulario">
-        <label>
-          ID do encontro
-          <input id="par-encontro-id" name="encontroId" placeholder="enc_…" autocomplete="off" spellcheck="false">
-        </label>
-        <label>
-          Código (6 caracteres)
-          <input id="par-codigo" name="codigo" maxlength="6" placeholder="ABC123" autocomplete="off" spellcheck="false">
-        </label>
-        <button id="par-enviar" type="submit" class="principal">Registrar presença</button>
-      </form>
+    <!-- M3 — Presença por QR -->
+    <section id="modulo-m3" class="modulo" hidden>
+      <header class="topo-m3">
+        <h2>Presença por QR</h2>
+        <nav class="abas">
+          <button id="tab-organizacao" class="aba ativo" type="button">Organização</button>
+          <button id="tab-participante" class="aba" type="button">Participante</button>
+        </nav>
+      </header>
 
-      <p id="par-msg" class="msg" role="status"></p>
+      <main>
+        <section id="tela-organizacao" class="tela">
+          <h2>Código do encontro</h2>
+          <form id="org-form" class="formulario">
+            <label>
+              ID do encontro
+              <input id="org-encontro-id" name="encontroId" placeholder="enc_…" autocomplete="off" spellcheck="false">
+            </label>
+            <button id="org-carregar" type="submit" class="principal">Obter código</button>
+          </form>
 
-      <section id="par-leituras-box" class="leituras" hidden>
-        <h3>Leituras locais</h3>
-        <ul id="par-leituras"></ul>
-      </section>
+          <p id="org-msg" class="msg" role="status"></p>
+
+          <div id="org-codigo-box" class="codigo-box" hidden>
+            <div id="org-codigo" class="codigo-grande" aria-label="Código de presença"></div>
+            <div class="codigo-meta">
+              <span>Encontro <b id="org-encontro-info"></b></span>
+              <span>Válido até <time id="org-valido"></time></span>
+              <span>Próxima troca <time id="org-troca"></time></span>
+            </div>
+            <button id="org-cheia" type="button" class="segundario">Tela cheia</button>
+          </div>
+        </section>
+
+        <section id="tela-participante" class="tela" hidden>
+          <h2>Registrar presença</h2>
+          <form id="par-form" class="formulario">
+            <label>
+              ID do encontro
+              <input id="par-encontro-id" name="encontroId" placeholder="enc_…" autocomplete="off" spellcheck="false">
+            </label>
+            <label>
+              Código (6 caracteres)
+              <input id="par-codigo" name="codigo" maxlength="6" placeholder="ABC123" autocomplete="off" spellcheck="false">
+            </label>
+            <button id="par-enviar" type="submit" class="principal">Registrar presença</button>
+          </form>
+
+          <p id="par-msg" class="msg" role="status"></p>
+
+          <section id="par-leituras-box" class="leituras" hidden>
+            <h3>Leituras locais</h3>
+            <ul id="par-leituras"></ul>
+          </section>
+        </section>
+      </main>
     </section>
   </main>
 
   <script src="app.js"></script>
+  <script src="m1.js"></script>
 </body>
 </html>

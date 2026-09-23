@@ -3,6 +3,7 @@
 
   var QUERY = new URLSearchParams(window.location.search);
 
+  // M3 module (existing)
   var M3 = {
     config: {
       apiBase: QUERY.get("api") || "http://localhost:3000",
@@ -26,7 +27,7 @@
   }
   ErroRede.prototype = Object.create(Error.prototype);
 
-  async function requisicao(caminho, opcoes) {
+  async function requisicaoM3(caminho, opcoes) {
     opcoes = opcoes || {};
     var cabecalhos = { "Content-Type": "application/json" };
     if (opcoes.usuario) cabecalhos["X-Usuario"] = opcoes.usuario;
@@ -43,35 +44,47 @@
     }
 
     var texto = await resposta.text();
-    var dados = null;
+    var corpo = null;
     if (texto) {
-      try { dados = JSON.parse(texto); } catch (erro) { dados = texto; }
+      try { corpo = JSON.parse(texto); } catch (erro) { corpo = texto; }
     }
 
     if (!resposta.ok) {
-      var corpo = dados && typeof dados === "object" ? dados : {};
+      var b = corpo && typeof corpo === "object" ? corpo : {};
       throw new ErroApi(
         resposta.status,
         corpo.erro || "ERRO",
         corpo.mensagem || texto || resposta.statusText
       );
     }
-    return dados;
+    return corpo;
   }
 
   M3.api = {
     buscarCodigo: function (encontroId, usuario) {
-      return requisicao("/encontros/" + encodeURIComponent(encontroId) + "/codigo", {
+      return requisicaoM3("/encontros/" + encodeURIComponent(encontroId) + "/codigo", {
         usuario: usuario,
       });
     },
     registrarPresenca: function (encontroId, codigo, lidoEm, usuario) {
       var corpo = { codigo: codigo };
       if (lidoEm) corpo.lidoEm = lidoEm;
-      return requisicao("/encontros/" + encodeURIComponent(encontroId) + "/presencas", {
+      return requisicaoM3("/encontros/" + encodeURIComponent(encontroId) + "/presencas", {
         metodo: "POST",
         usuario: usuario,
         corpo: corpo,
+      });
+    },
+    registrarPresencaManual: function (encontroId, participanteId, justificativa, usuario) {
+      return requisicaoM3("/encontros/" + encodeURIComponent(encontroId) + "/presencas/manual", {
+        metodo: "POST",
+        usuario: usuario,
+        corpo: { participanteId: participanteId, justificativa: justificativa },
+      });
+    },
+    listarPresencas: function (encontroId, usuario) {
+      return requisicaoM3("/encontros/" + encodeURIComponent(encontroId) + "/presencas", {
+        usuario: usuario,
       });
     },
   };
@@ -84,9 +97,7 @@
       var bruto = window.localStorage.getItem(CHAVE_LEITURAS);
       var dados = bruto ? JSON.parse(bruto) : [];
       return Array.isArray(dados) ? dados : [];
-    } catch (erro) {
-      return [];
-    }
+    } catch (erro) { return []; }
   }
 
   function persistirLeituras(leituras) {
@@ -94,9 +105,7 @@
     for (var i = 0; i < assinantes.length; i++) assinantes[i](leituras.slice());
   }
 
-  function novoId() {
-    return "m3_" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
-  }
+  function novoId() { return "m3_" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36); }
 
   M3.store = {
     listar: lerLeituras,
@@ -104,7 +113,7 @@
     adicionarLeitura: function (dados) {
       var leituras = lerLeituras();
       var leitura = {
-        id: novoId(),
+        id: "m3_" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36),
         encontroId: dados.encontroId,
         codigo: dados.codigo,
         lidoEm: dados.lidoEm,
@@ -118,9 +127,7 @@
       var leituras = lerLeituras().map(function (l) {
         if (l.id !== id) return l;
         var novo = { id: l.id, encontroId: l.encontroId, codigo: l.codigo, lidoEm: l.lidoEm, status: status };
-        if (extra) {
-          for (var chave in extra) if (Object.prototype.hasOwnProperty.call(extra, chave)) novo[chave] = extra[chave];
-        }
+        if (extra) { for (var chave in extra) if (Object.prototype.hasOwnProperty.call(extra, chave)) novo[chave] = extra[chave]; }
         return novo;
       });
       persistirLeituras(leituras);
@@ -138,10 +145,7 @@
         M3.store.setarStatus(leitura.id, "sincronizada");
         resumo.enviadas++;
       } catch (erro) {
-        if (erro instanceof ErroRede) {
-          resumo.falhas++;
-          return resumo;
-        }
+        if (erro instanceof ErroRede) { resumo.falhas++; return resumo; }
         M3.store.setarStatus(leitura.id, "falhou", { erro: erro.erro });
         resumo.falhas++;
       }
@@ -204,9 +208,7 @@
     await carregarCodigo(false);
   }
 
-  function temAgendamento() {
-    return timerOrganizacao !== null;
-  }
+  function temAgendamento() { return timerOrganizacao !== null; }
 
   async function carregarCodigo(mostrarAviso) {
     var encontroId = (elemento("org-encontro-id").value || "").trim();
@@ -330,7 +332,7 @@
   var intervaloSinc = null;
   var iniciado = false;
 
-  function iniciar() {
+  function iniciarM3() {
     if (iniciado) return;
     iniciado = true;
     elemento("tab-organizacao").addEventListener("click", function () { alternarTela("organizacao"); });
@@ -355,7 +357,10 @@
     alternarTela("organizacao");
   }
 
-  M3.iniciar = iniciar;
+  M3.iniciar = function () {
+    if (!elemento("modulo-m3").hidden) iniciarM3();
+  };
+
   M3.foiIniciado = function () { return iniciado; };
   M3.desligar = function () {
     M3.organizacao.parar();
@@ -363,11 +368,61 @@
     assinantes.length = 0;
   };
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", iniciar);
-  } else {
-    iniciar();
+  window.M3 = M3;
+
+  // ============================================================
+  // MODULE SWITCHING
+  // ============================================================
+  function elemento(id) { return document.getElementById(id); }
+
+  function alternarModulo(modulo) {
+    document.querySelectorAll(".modulo").forEach(function (m) { m.hidden = true; });
+    document.querySelectorAll(".aba-modulo").forEach(function (b) { b.classList.remove("ativo"); });
+    var moduloEl = elemento("modulo-" + modulo);
+    if (moduloEl) moduloEl.hidden = false;
+    var tabEl = elemento("tab-" + modulo);
+    if (tabEl) tabEl.classList.add("ativo");
+
+    if (modulo === "m1" && window.M1 && typeof window.M1.iniciar === "function") {
+      window.M1.iniciar();
+    } else if (modulo === "m3" && window.M3 && typeof window.M3.iniciar === "function") {
+      window.M3.iniciar();
+    }
   }
 
+  function alternarAbaM3(nome) {
+    var org = nome === "organizacao";
+    var telaOrg = elemento("tela-organizacao");
+    var telaPar = elemento("tela-participante");
+    if (telaOrg) telaOrg.hidden = !org;
+    if (telaPar) telaPar.hidden = org;
+    var tabOrg = elemento("tab-organizacao");
+    var tabPar = elemento("tab-participante");
+    if (tabOrg) tabOrg.classList.toggle("ativo", org);
+    if (tabPar) tabPar.classList.toggle("ativo", !org);
+  }
+
+  // Initialize module switching
+  document.addEventListener("DOMContentLoaded", function () {
+    var tabM1 = elemento("tab-m1");
+    var tabM3 = elemento("tab-m3");
+    var tabOrg = elemento("tab-organizacao");
+    var tabPar = elemento("tab-participante");
+
+    if (tabM1) tabM1.addEventListener("click", function () { alternarModulo("m1"); });
+    if (tabM3) tabM3.addEventListener("click", function () { alternarModulo("m3"); });
+    if (tabOrg) tabOrg.addEventListener("click", function () { alternarAbaM3("organizacao"); });
+    if (tabPar) tabPar.addEventListener("click", function () { alternarAbaM3("participante"); });
+
+    // Initialize active module
+    var moduloAtivo = document.querySelector(".modulo:not([hidden])");
+    if (moduloAtivo && moduloAtivo.id === "modulo-m1" && window.M1) {
+      if (typeof window.M1.iniciar === "function") window.M1.iniciar();
+    } else if (moduloAtivo && moduloAtivo.id === "modulo-m3" && window.M3) {
+      if (typeof window.M3.iniciar === "function") window.M3.iniciar();
+    }
+  });
+
+  // Export M3 for global access
   window.M3 = M3;
 })();

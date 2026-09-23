@@ -1,14 +1,18 @@
 {
-  "stack": "Node.js 22 + Express + SQLite; interface web em React + Vite",
+  "stack": "Node.js 22 + Fastify + SQLite (sql.js); UI em Vanilla HTML/CSS/JS",
   "api": {
     "pasta": "api",
     "instalar": "npm install",
-    "iniciar": "npm start"
+    "iniciar": "npm start",
+    "desenvolver": "npm run dev",
+    "testar": "npm test",
+    "build": "npm run build"
   },
-  "interface": {
+  "ui": {
     "pasta": "ui",
     "instalar": "npm install",
-    "iniciar": "npm start"
+    "iniciar": "npm start",
+    "testar": "npm test"
   },
-  "testes": ["npm test", "npm --prefix ui test"]
+  "testes": ["npm --prefix api test", "npm --prefix ui test"]
 }

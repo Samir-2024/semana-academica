@@ -1,25 +1,14 @@
 # Equipe
 
-Cada integrante é responsável integralmente pela entrevista, especificação,
-testes, API, telas e auditoria do seu módulo.
+Cada integrante é responsável integralmente pela entrevista, especificação, testes, API, telas e auditoria do seu módulo.
 
 | Módulo | Dono | Usuário do GitHub |
 |---|---|---|
 | M1 — Grade de atividades | Samir Khaled | @Samir-2024 |
 | M2 — Inscrições e lista de espera | Gustavo Ferreira | @TecGustaF |
 | M3 — Presença por QR | Fernanda Tozzi | @FernandaTozzi |
-Cada integrante é dono de um módulo inteiro: entrevista, spec, testes, API/telas e acompanhamento da auditoria.
 
-| Módulo | Dono | Usuário do GitHub |
-|---|---|---|
-| M1 — Grade de atividades | | |
-| M2 — Inscrições e lista de espera | | |
-| M3 — Presença por QR | Fernanda Tozzi | FernandaTozzi |
-| M1 — Grade de atividades | Samir | Samir-2024 |
-| M2 — Inscrições e lista de espera | Gustavo | TecGustaF |
-| M3 — Presença por QR | Fernanda | FernandaTozzi |
-| M4 — Certificados (grupos de 4 e 5) | | |
-| M5 — Painel da organização (grupos de 5) | | |
+Cada integrante é dono de um módulo inteiro: entrevista, spec, testes, API/telas e acompanhamento da auditoria.
 
 ---
 

@@ -1,0 +1,101 @@
+# Evidências de Agentes — Semana Acadêmica
+
+Gerado em: 2026-09-22
+
+## Agentes configurados no projeto
+
+### 1. auditor
+- **Arquivo:** `.opencode/agent/auditor.md`
+- **Descrição:** Audita um módulo da Semana Acadêmica contra a spec — para cada regra, confere se ela nasceu de uma pergunta da entrevista e se existe um teste que a comprove, e aponta o que ficou sem prova ou sem origem. Não conserta nada.
+- **Modo:** subagent
+- **Ferramentas permitidas:** read, grep, glob, bash
+- **Ferramentas proibidas:** write, edit, patch, task
+- **Temperatura:** 0.1
+- **Uso:** "Use quando pedirem para auditar um módulo ou quando a implementação de uma fatia estiver verde."
+
+### 2. revisor-de-contrato
+- **Arquivo:** `.opencode/agent/revisor-de-contrato.md`
+- **Descrição:** Revisa se a implementação da API respeita o contrato-api.md. Verifica rotas, métodos HTTP, parâmetros, campos JSON, códigos HTTP e códigos de erro. Aponta divergências objetivamente.
+- **Modo:** subagent
+- **Ferramentas permitidas:** read, grep, glob, bash
+- **Ferramentas proibidas:** write, edit, patch, task
+- **Uso:** "Use quando pedirem para revisar o contrato da API."
+
+### 3. explore (built-in)
+- **Descrição:** Agente rápido especializado em explorar codebases. Busca arquivos por padrões, busca código por palavras-chave, responde perguntas sobre o codebase.
+- **Uso:** "Use este agente quando precisar encontrar arquivos por padrões, buscar código por palavras-chave, ou responder perguntas sobre o codebase."
+
+### 4. general (built-in)
+- **Descrição:** Agente de propósito geral para pesquisar questões complexas e executar tarefas multi-passo.
+- **Uso:** "Use este agente para executar múltiplas unidades de trabalho em paralelo."
+
+---
+
+## Skills disponíveis
+
+### 1. grilling
+- **Arquivo:** `.opencode/skills/grilling/SKILL.md`
+- **Descrição:** Entrevista o usuário até não sobrar decisão implícita sobre uma funcionalidade nova.
+- **Uso:** Antes de escrever código quando o pedido for vago, ou quando pedirem "me entreviste", "grill", "levanta os requisitos", "o que falta decidir".
+
+### 2. to-spec
+- **Arquivo:** `.opencode/skills/to-spec/SKILL.md`
+- **Descrição:** Transforma a conversa atual em um arquivo de spec verificável, com regras numeradas e critérios de aceite.
+- **Uso:** Depois da entrevista, quando pedirem "vira isso em spec", "escreve a spec", "documenta as decisões".
+
+### 3. tdd
+- **Arquivo:** `.opencode/skills/tdd/SKILL.md`
+- **Descrição:** Implementa uma spec em fatias verticais, teste primeiro — vermelho, verde, próxima fatia.
+- **Uso:** Quando existir uma spec para implementar, ou quando pedirem "TDD", "teste primeiro", "red-green".
+
+### 4. to-spec
+- **Arquivo:** `.opencode/skills/to-spec/SKILL.md`
+- **Descrição:** Transforma a conversa atual em um arquivo de spec verificável, com regras numeradas e critérios de aceite.
+- **Uso:** Depois da entrevista, quando pedirem "vira isso em spec", "escreve a spec", "documenta as decisões".
+
+### 5. novo-subagente
+- **Arquivo:** `.opencode/skills/novo-subagente/SKILL.md`
+- **Descrição:** Cria um subagente do OpenCode em `.opencode/agent/<nome>.md` — frontmatter, ferramentas permitidas e prompt.
+- **Uso:** Quando pedirem para criar um agente, um subagente, um revisor, um auditor, ou "um agente que faz X".
+
+---
+
+## Histórico de uso no M1
+
+| Etapa | Agente/Skill | Descrição |
+|---|---|---|
+| 1 | grilling | Entrevista para levantamento de requisitos do M1 (15 perguntas P-01 a P-15) |
+| 2 | to-spec | Transformação da entrevista em spec verificável (specs/M1-grade-de-atividades.md) |
+| 3 | tdd | Implementação das 10 fatias do M1 (testes primeiro) |
+| 4 | auditor | Auditoria final do M1 (auditorias/M1-grade.md) |
+| 5 | to-spec | Correções pós-auditoria transformadas em spec atualizada |
+| 6 | tdd | Correções das 4 pendências da auditoria |
+
+---
+
+## Agentes utilizados na correção final
+
+| Agente | Tarefa |
+|---|---|
+| to-spec | Correção das 4 pendências da auditoria transformadas em spec |
+| tdd | Implementação das 4 correções (JSON inválido, teste 100 atividades, cancelamento, validação título) |
+| auditor | Auditoria final pós-correções |
+| novo-subagente | (não utilizado) |
+| revisor-de-contrato | (não utilizado) |
+
+---
+
+## Status dos agentes
+
+| Agente | Status |
+|---|---|
+| auditor | ✅ Disponível e usado |
+| revisor-de-contrato | ✅ Disponível |
+| grilling | ✅ Disponível e usado |
+| to-spec | ✅ Disponível e usado |
+| tdd | ✅ Disponível e usado |
+| novo-subagente | ✅ Disponível |
+
+---
+
+*Arquivo gerado automaticamente como parte da evidência final do M1.*
