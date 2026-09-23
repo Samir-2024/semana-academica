@@ -5,7 +5,10 @@
     "instalar": "npm install",
     "iniciar": "npm start"
   },
-  "testes": [
-    "cd api && npm test"
-  ]
+  "interface": {
+    "pasta": "ui",
+    "instalar": "npm install",
+    "iniciar": "npm start"
+  },
+  "testes": ["npm test", "npm --prefix ui test"]
 }
