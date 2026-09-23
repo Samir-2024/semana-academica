@@ -1,5 +1,5 @@
 {
-  "stack": "Node.js 20 + TypeScript + Fastify + SQLite (sql.js WASM); interface web vanilla HTML/CSS/JS com testes node:test + jsdom (API mock)",
+  "stack": "Node.js 22 + Express + SQLite; interface web em React + Vite",
   "api": {
     "pasta": "api",
     "instalar": "npm install",
