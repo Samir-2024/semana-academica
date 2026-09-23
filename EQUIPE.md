@@ -4,6 +4,9 @@ Cada integrante é dono de um módulo inteiro: entrevista, spec, testes, API/tel
 
 | Módulo | Dono | Usuário do GitHub |
 |---|---|---|
+| M1 — Grade de atividades | | |
+| M2 — Inscrições e lista de espera | | |
+| M3 — Presença por QR | Fernanda Tozzi | FernandaTozzi |
 | M1 — Grade de atividades | Samir | Samir-2024 |
 | M2 — Inscrições e lista de espera | Gustavo | TecGustaF |
 | M3 — Presença por QR | Fernanda | FernandaTozzi |
